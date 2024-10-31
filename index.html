@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <title>Results summary component</title>
+</head>
+<body>
+  <div class="main-body">
+    <div class="result-main-container">
+      <div class="result-container">
+        <p tabindex="0" class="heading-results">Your Result</p>
+        <div class="circle">
+          <p tabindex="0" class="result-score">76</p>
+          <p tabindex="0" class="total-score">of 100</p>
+        </div>
+        <p tabindex="0" class="footer-heading">Great</p>
+        <p tabindex="0" class="footer-desc">You scored higher than 65% of the people who have taken these tests.</p>
+      </div>
+
+      <div class="summary-container">
+        <p tabindex="0" class="summary-heading">Summary</p>
+        <ul id="summary-list"></ul>
+        <button type="button" class="continue-btn">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    fetch('data.json')
+      .then(response => response.json())
+      .then(data => {
+        const totalScore = data.reduce((sum, item) => sum + item.score, 0);
+        const averageScore = (totalScore / data.length).toFixed(0);
+
+        document.querySelector('.result-score').textContent = averageScore;
+
+        const summaryList = document.getElementById('summary-list');
+        data.forEach(item => {
+          const listItem = document.createElement('li');
+          listItem.className = 'summary-item';
+          listItem.style.backgroundColor = getBackgroundColor(item.category); 
+
+          listItem.innerHTML = `
+            <div class="item-name">
+              <span class="item-icon">
+                <img src="${item.icon}" alt="${item.category}_icon" />
+              </span>
+              <p class="item-title">${item.category}</p>
+            </div>
+            <div>
+              <span class="item-score">${item.score}</span>
+              <span class="item-total-score"> / 100</span>
+            </div>
+          `;
+          summaryList.appendChild(listItem);
+        });
+      })
+      .catch(error => console.error('Error fetching data:', error));
+
+
+
+    function getBackgroundColor(category) {
+      switch (category) {
+        case 'Reaction':
+          return 'hsl(0, 100%, 97.5%)';
+        case 'Memory':
+          return 'hsl(39, 100%, 97.5%)';
+        case 'Verbal':
+          return 'hsl(166, 100%, 97.5%)';
+        case 'Visual':
+          return 'hsl(234, 85%, 97.5%)';
+        default:
+          return 'white';
+      }
+    }
+  </script>
+</body>
+</html>
